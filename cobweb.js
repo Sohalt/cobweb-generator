@@ -1,19 +1,19 @@
 "use strict";
-function cobweb(canvas, options){
+function cobweb(canvas, {maxRadials = 20,
+                         minRadials = 10,
+                         maxRings = 20,
+                         minRings = 10,
+                         radials = Math.floor(Math.random()*(maxRadials-minRadials)+minRadials),
+                         rings = Math.floor(Math.random()*(maxRings-minRings)+minRings),
+                         radius = undefined ,
+                         radialRandomness = 1.5, // positive float: 1 -> all equidistant, higher numbers -> more random spacing
+                         ringRandomness = 2.5, // positive integer: 1 -> all equidistant, higher numbers -> more random spacing
+                         curvature = 0.8,
+                         center = undefined} = {}){ // float between 0 and 1: 1 -> straight, 0 -> maximum curvature
     paper.setup(canvas);
 
-    let maxRadials = 20,
-        minRadials = 10,
-        maxRings = 20,
-        minRings = 10,
-        radials = Math.floor(Math.random()*(maxRadials-minRadials)+minRadials),
-        rings = Math.floor(Math.random()*(maxRings-minRings)+minRings),
-        size = paper.view.size,
-        radius = Math.min(size.width, size.height)/2,
-        radialRandomness = 1.5, // positive float: 1 -> all equidistant, higher numbers -> more random spacing
-        ringRandomness = 2.5, // positive integer: 1 -> all equidistant, higher numbers -> more random spacing
-        curvature = 0.8, // float between 0 and 1: 1 -> straight, 0 -> maximum curvature
-        center = paper.project.view.center;
+    radius = radius != undefined ? radius : Math.min(paper.view.size.width, paper.view.size.height)/2;
+    center = center != undefined ? center : paper.view.center;
 
     let angles = randomSegments(radials, radialRandomness).map((a) => a * 360);
     let radii = randomSegments(rings, ringRandomness).map((r)=> r * radius);
