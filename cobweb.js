@@ -1,13 +1,19 @@
 "use strict";
 function cobweb(canvas, options){
-    let radials = 15,
-        rings = 10,
-        radius = Math.min(canvas.width, canvas.height)/2,
-        radialRandomness = 1,
-        ringRandomness = 1,
-        curvature = 1,
-        center = new paper.Point(radius,radius);
     paper.setup(canvas);
+
+    let maxRadials = 20,
+        minRadials = 10,
+        maxRings = 20,
+        minRings = 10,
+        radials = Math.floor(Math.random()*(maxRadials-minRadials)+minRadials),
+        rings = Math.floor(Math.random()*(maxRings-minRings)+minRings),
+        size = paper.view.size,
+        radius = Math.min(size.width, size.height)/2,
+        radialRandomness = 1.5, // positive float: 1 -> all equidistant, higher numbers -> more random spacing
+        ringRandomness = 2.5, // positive integer: 1 -> all equidistant, higher numbers -> more random spacing
+        curvature = 0.8, // float between 0 and 1: 1 -> straight, 0 -> maximum curvature
+        center = new paper.Point(radius,radius);
 
     let angles = randomSegments(radials, radialRandomness).map((a) => a * 360);
     let radii = randomSegments(rings, ringRandomness).map((r)=> r * radius);
@@ -24,17 +30,24 @@ function cobweb(canvas, options){
     radii.forEach((radius) => {
         let ring = new paper.Path();
         ring.strokeColor = 'black';
-        ring.closed = true;
-        angles.forEach((angle) => {
-            let p = new paper.Point();
-            p.angle = angle;
-            p.length = radius;
-            ring.add(p);
-        });
+        var p1 = new paper.Point();
+        p1.angle = angles[0];
+        p1.length = radius;
+        ring.moveTo(p1);
+        for(var i = 1; i <= radials; i++){
+            let p2 = new paper.Point();
+            p2.angle = angles[i%radials];
+            p2.length = radius;
+            let p3 = p1.add(p2).divide(2);
+            p3.length *= curvature;
+            ring.curveTo(p3,p2);
+            p1 = p2;
+        };
     });
 
     let layer = paper.project.activeLayer;
     layer.translate(paper.project.view.center);
+    console.log(paper.view);
 
     paper.view.draw();
 
