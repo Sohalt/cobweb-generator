@@ -13,7 +13,7 @@ function cobweb(canvas, options){
         radialRandomness = 1.5, // positive float: 1 -> all equidistant, higher numbers -> more random spacing
         ringRandomness = 2.5, // positive integer: 1 -> all equidistant, higher numbers -> more random spacing
         curvature = 0.8, // float between 0 and 1: 1 -> straight, 0 -> maximum curvature
-        center = new paper.Point(radius,radius);
+        center = paper.project.view.center;
 
     let angles = randomSegments(radials, radialRandomness).map((a) => a * 360);
     let radii = randomSegments(rings, ringRandomness).map((r)=> r * radius);
@@ -46,7 +46,7 @@ function cobweb(canvas, options){
     });
 
     let layer = paper.project.activeLayer;
-    layer.translate(paper.project.view.center);
+    layer.translate(center);
     console.log(paper.view);
 
     paper.view.draw();
